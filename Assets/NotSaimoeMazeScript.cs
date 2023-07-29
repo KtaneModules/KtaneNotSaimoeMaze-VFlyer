@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class NotSaimoeMazeScript : MonoBehaviour {
 	public KMBombModule modSelf;
@@ -271,18 +274,118 @@ public class NotSaimoeMazeScript : MonoBehaviour {
 			UpdateRenderers(false);
     }
 #pragma warning disable 414
-	private readonly string TwitchHelpMessage = "\"!{0} u/r/d/l\" [Moves up/right/down/left, \"move\"/\"m\" can be prepended before the directions to move quicker.] | \"!{0} submit\" [Submits current position] | \"!{0} reset\" [Resets the module]";
-	private bool TwitchShouldCancelCommand;
+	private readonly string TwitchHelpMessage = "\"!{0} up/right/down/left/u/r/d/l\" [Moves up/right/down/left, \"move\"/\"m\" can be prepended before the directions to move quicker.] | \"!{0} submit\" [Submits current position] | \"!{0} reset\" [Resets the module's submission progress. This will place you in a different spot!]";
 #pragma warning restore 414
-	IEnumerator ProcessTwitchCommand(string cmd)
+	IEnumerator ProcessTwitchCommand(string command)
     {
-		yield return null;
-		while (!TwitchShouldCancelCommand)
-        {
-			directionSelectables[1].OnInteract();
-			yield return new WaitForSeconds(0.5f);
-        }
-		TwitchShouldCancelCommand = false;
+		var moveFast = false;
+		var inteCmd = command.Trim();
+		if (Regex.IsMatch(inteCmd, @"^submit$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+		{
+			if (!interactable)
+			{
+				yield return "sendtochaterror You are unable to interact with the module currently. The command was not processed.";
+				yield break;
+			}
+			yield return null;
+			submitSelectable.OnInteract();
+			submitSelectable.OnInteractEnded();
+		}
+		else if (Regex.IsMatch(inteCmd, @"^reset$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+		{
+			if (!interactable)
+			{
+				yield return "sendtochaterror You are unable to interact with the module currently. The command was not processed.";
+				yield break;
+			}
+			yield return null;
+			submitSelectable.OnInteract();
+			yield return new WaitUntil(() => timeHeld >= 1f);
+			submitSelectable.OnInteractEnded();
+		}
+		else
+		{
+			var rgxMove = Regex.Match(inteCmd, @"^m(ove)?\s+", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+			if (rgxMove.Success)
+			{
+				inteCmd = inteCmd.Replace(rgxMove.Value, "").Trim();
+				moveFast = true;
+			}
+			if (Regex.IsMatch(inteCmd, @"^\s*[uldr\s]+\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+			{
+				var usableCommand = inteCmd.Trim().ToLowerInvariant();
+				List<int> allPresses = new List<int>();
+				foreach (string directionportion in usableCommand.Split())
+				{
+					foreach (char dir in directionportion)
+					{
+						switch (dir)
+						{
+							case 'u':
+								allPresses.Add(0);
+								break;
+							case 'd':
+								allPresses.Add(2);
+								break;
+							case 'l':
+								allPresses.Add(3);
+								break;
+							case 'r':
+								allPresses.Add(1);
+								break;
+							default:
+								yield return string.Format("sendtochaterror I do not know what direction \"{0}\" is supposed to be.", dir);
+								yield break;
+						}
+					}
+				}
+				if (allPresses.Any())
+				{
+					for (int x = 0; x < allPresses.Count; x++)
+					{
+						yield return null;
+						directionSelectables[allPresses[x]].OnInteract();
+						yield return string.Format("trywaitcancel {0} Presses have been canceled after {1} movement(s)!", moveFast ? 0.1f : 1f, x);
+					}
+				}
+			}
+			else
+			{
+				string[] cmdSets = inteCmd.Trim().Split();
+				List<KMSelectable> allPresses = new List<KMSelectable>();
+				for (int x = 0; x < cmdSets.Length; x++)
+				{
+					if (Regex.IsMatch(cmdSets[x], @"^\s*u(p)?\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+					{
+						allPresses.Add(directionSelectables[0]);
+					}
+					else if (Regex.IsMatch(cmdSets[x], @"^\s*d(own)?\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+					{
+						allPresses.Add(directionSelectables[2]);
+					}
+					else if (Regex.IsMatch(cmdSets[x], @"^\s*l(eft)?\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+					{
+						allPresses.Add(directionSelectables[3]);
+					}
+					else if (Regex.IsMatch(cmdSets[x], @"^\s*r(ight)?\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+					{
+						allPresses.Add(directionSelectables[1]);
+					}
+					else
+					{
+						yield return string.Format("sendtochaterror I do not know what direction \"{0}\" is supposed to be.", cmdSets[x]);
+						yield break;
+					}
+				}
+				for (var x = 0; x < allPresses.Count; x++)
+				{
+					yield return null;
+					allPresses[x].OnInteract();
+					yield return string.Format("trywaitcancel {0} Presses have been canceled after {1} movement(s)!" ,moveFast ? 0.1f : 1f, x);
+				}
+				yield break;
+			}
+		}
 	}
 	IEnumerator TwitchHandleForcedSolve()
     {
@@ -293,9 +396,13 @@ public class NotSaimoeMazeScript : MonoBehaviour {
 			while (selectedIdxOrder[curSubmitIdx] != curRowIdx * colCount + curColIdx)
             {
 				if (curRowIdx != selectedIdxOrder[curSubmitIdx] / colCount)
+				{
 					directionSelectables[2].OnInteract();
+				}
 				else
+				{
 					directionSelectables[1].OnInteract();
+				}
 				yield return new WaitForSeconds(0.1f);
             }
 			submitSelectable.OnInteract();
