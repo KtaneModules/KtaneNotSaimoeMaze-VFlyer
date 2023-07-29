@@ -1450,6 +1450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a51d192a7594c8a4fb96b2d1552c99d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modSelf: {fileID: 114190856479959064}
   MAudio: {fileID: 114523788006217710}
   directionSelectables:
   - {fileID: 114886775996715000}
@@ -1584,7 +1585,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 169b4670695d5fb41afc6c1dc2a42915, type: 3}
   - {fileID: 21300000, guid: e75b699818be4744ebc0737c83084d37, type: 3}
   - {fileID: 21300000, guid: 877e9436b0e74524ca7c5be5e539a68e, type: 3}
-  - {fileID: 21300000, guid: 27372d350601a2e4ab72833e38e395d4, type: 3}
   - {fileID: 21300000, guid: b31c2576c87c7ca45bcbbb7811194e06, type: 3}
   - {fileID: 21300000, guid: 892d0423b850bd7428ced0663a10b5a1, type: 3}
   - {fileID: 21300000, guid: 96d173f574803724ea8275e9d6206ba8, type: 3}
@@ -1665,8 +1665,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 081cd128604163443bbeae45e343e6ea, type: 3}
   - {fileID: 21300000, guid: 59336679467aa91489372aedace691ed, type: 3}
   - {fileID: 21300000, guid: ba2c103db7f50b74f99a958b0e34a610, type: 3}
-  idxOrder: {fileID: 4900000, guid: 70b09f32331483f4e8800a7554fd67b0, type: 3}
-  testSprites: 1
+  spriteNames: []
+  idxOrder: {fileID: 0}
+  debugText: {fileID: 0}
+  testSprites: 0
 --- !u!114 &114842428213497378
 MonoBehaviour:
   m_ObjectHideFlags: 1

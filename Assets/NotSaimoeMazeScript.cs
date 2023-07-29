@@ -18,6 +18,7 @@ public class NotSaimoeMazeScript : MonoBehaviour {
 	int[][] idxGrid;
 	const int rowCount = 5, colCount = 5;
 	const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	readonly int[] defaultSolveOrderIdxes = new[] { 197, 183, 176, 125, 153, 139, 198, 48, 85, 185, 16, 189, 168, 124, 137, 117, 109, 149, 40, 63, 80, 54, 71, 59, 128, 41, 43, 164, 165, 65, 106, 33, 84, 62, 88, 0, 2, 26, 174, 37, 45, 49, 100, 19, 158, 9, 192, 182, 34, 161, 196, 61, 72, 190, 160, 76, 177, 78, 102, 81, 145, 56, 74, 118, 105, 195, 138, 79, 32, 180, 99, 132, 14, 188, 92, 67, 28, 141, 7, 75, 171, 24, 90, 15, 129, 107, 167, 112, 142, 47, 29, 68, 148, 116, 156, 44, 83, 42, 70, 38, 52, 133, 57, 193, 122, 97, 172, 111, 69, 147, 144, 130, 22, 60, 98, 113, 82, 13, 8, 115, 51, 166, 159, 89, 64, 123, 143, 18, 127, 150, 95, 104, 55, 136, 73, 23 };
 	static int moduleIDCnt;
 	int curColIdx, curRowIdx, curSubmitIdx, moduleID;
 	bool interactable, holdingSubmit, holdingSubmitWhileInteractable, moduleSolved, hideRenderers;
@@ -31,17 +32,23 @@ public class NotSaimoeMazeScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		moduleID = ++moduleIDCnt;
-		var storedIdxPossibleNums = (idxOrder ?? new TextAsset()).text.Split('\n');
 		storedSpriteIdxOrder = new List<int>();
-		foreach (var aNum in storedIdxPossibleNums)
-        {
-			int u;
-			if (int.TryParse(aNum, out u))
-				storedSpriteIdxOrder.Add(u);
-			else
-				Debug.LogWarningFormat("\"{0}\" cannot be converted to a valid idx.", aNum);
-        }
+		if (idxOrder != null)
+		{
+			var storedIdxPossibleNums = idxOrder.text.Split('\n');
+			foreach (var aNum in storedIdxPossibleNums)
+			{
+				int u;
+				if (int.TryParse(aNum, out u))
+					storedSpriteIdxOrder.Add(u);
+				else
+					Debug.LogWarningFormat("\"{0}\" cannot be converted to a valid idx.", aNum);
+			}
+		}
+		else
+			storedSpriteIdxOrder.AddRange(defaultSolveOrderIdxes);
 		Debug.Log(storedSpriteIdxOrder.Join(", "));
+		Debug.Log(storedSpriteIdxOrder.Select(a => allPossibleSprites[a].name).Join(", "));
 		spriteNames = allPossibleSprites.Select(a => TryProperName(a.name)).ToArray();
 
 		
@@ -89,11 +96,12 @@ public class NotSaimoeMazeScript : MonoBehaviour {
 			}
 			if (selectedIdxOrder[curSubmitIdx] == curRowIdx * colCount + curColIdx)
             {
-				QuickLog("Correctly submitted {0}{1}{2}", alphabet[curColIdx], curRowIdx + 1, !hideRenderers ? "; Careful. The displays are now hidden." : "");
+				QuickLog("Correctly submitted {0}{1}{2} Correct submissions so far: {3}", alphabet[curColIdx], curRowIdx + 1, hideRenderers ? "." : "; Careful. The displays are now hidden.", curSubmitIdx + 1);
 				hideRenderers = true;
 				curSubmitIdx++;
 				if (selectedIdxOrder.Count <= curSubmitIdx)
                 {
+					QuickLog("That's all of them. Module disarmed.");
 					interactable = false;
 					moduleSolved = true;
 					modSelf.HandlePass();
@@ -102,7 +110,7 @@ public class NotSaimoeMazeScript : MonoBehaviour {
 			}
 			else
             {
-				QuickLog("Incorrectly submitted {0}{1}{2}", alphabet[curColIdx], curRowIdx + 1, !hideRenderers ? "" : "; Revealing displays again.");
+				QuickLog("Incorrectly submitted {0}{1}{2} Correct submissions so far: {3}", alphabet[curColIdx], curRowIdx + 1, hideRenderers ? "; Revealing displays again." : "", curSubmitIdx);
 				hideRenderers = false;
 				modSelf.HandleStrike();
 			}
@@ -194,7 +202,7 @@ public class NotSaimoeMazeScript : MonoBehaviour {
 			selectedIdxOrder = selectedSpriteIdxOrder.Select(a => allItems.IndexOf(a)).ToList();
             for (var x = 0; x < rowCount * colCount; x++)
 				idxGrid[x / colCount][x % colCount] = allItems[x];
-			QuickLog("The new grid now displays pictures of the following franchises/shows:");
+			QuickLog("The grid now displays pictures of the following franchises/shows:");
 			for (var x = 0; x < rowCount; x++)
 				QuickLog("{0}", idxGrid[x].Select(a => spriteNames[a]).Join(", "));
 			curColIdx = Random.Range(0, colCount);
@@ -221,7 +229,13 @@ public class NotSaimoeMazeScript : MonoBehaviour {
 			{
 				interactable = true;
                 MAudio.PlaySoundAtTransform("Notify", transform);
-				ResetModule();
+				//ResetModule();
+				curSubmitIdx = 0;
+				hideRenderers = false;
+				curColIdx = Random.Range(0, colCount);
+				curRowIdx = Random.Range(0, rowCount);
+				QuickLog("Submission progress reset. Now on {0}{1}.", alphabet[curColIdx], curRowIdx + 1);
+				UpdateRenderers();
 			}
 		}
     }
