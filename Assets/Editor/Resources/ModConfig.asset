@@ -11,12 +11,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
   m_Name: ModConfig
   m_EditorClassIdentifier: 
-  id: SaimoeMaze
-  title: Saimoe Maze
-  author: BigCrunch22
-  description: "\"Cruelest Cruel of Cruels.\"\r\n\r\nIdea - Tachatat18\r\nImplementor
-    - BigCrunch22\r\n\r\nTP Supported!\r\n\r\nIf someone wants to add TP Support/Logging/Anything
-    useful, you have my approval for that."
+  id: NotSaimoeMazeMod
+  title: Not Saimoe Maze
+  author: VFlyer
+  description: "\"Anime? What's that?\"\r\n\r\nIdea - Tachatat18\r\nImplementor -
+    VFlyer\r\nModeling by BigCrunch22\n\r\nTP Supported!\r\n"
   version: 1.0
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 71256f1eb6ca45e4f8399f266d6e6684, type: 3}
