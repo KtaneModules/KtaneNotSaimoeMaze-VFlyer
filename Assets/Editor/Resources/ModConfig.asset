@@ -14,8 +14,8 @@ MonoBehaviour:
   id: NotSaimoeMazeMod
   title: Not Saimoe Maze
   author: VFlyer
-  description: "\"Anime? What's that?\"\r\n\r\nIdea - Tachatat18\r\nImplementor -
-    VFlyer\r\nModeling by BigCrunch22\n\r\nTP Supported!\r\n"
+  description: "\"Anime? I don't seem to remember all of these.\"\r\n\r\nIdea - Tachatat18\r\nImplementor
+    - VFlyer\r\nSaimoe Maze Model by BigCrunch22\n\r\nTP Supported!\r\n"
   version: 1.0
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 6d7350fdcae99104fa3bb78397b7d90a, type: 3}

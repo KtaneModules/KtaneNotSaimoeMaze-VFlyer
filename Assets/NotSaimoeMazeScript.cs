@@ -50,8 +50,8 @@ public class NotSaimoeMazeScript : MonoBehaviour {
 		}
 		else
 			storedSpriteIdxOrder.AddRange(defaultSolveOrderIdxes);
-		Debug.Log(storedSpriteIdxOrder.Join(", "));
-		Debug.Log(storedSpriteIdxOrder.Select(a => allPossibleSprites[a].name).Join(", "));
+		//Debug.Log(storedSpriteIdxOrder.Join(", "));
+		//Debug.Log(storedSpriteIdxOrder.Select(a => allPossibleSprites[a].name).Join(", "));
 		spriteNames = allPossibleSprites.Select(a => TryProperName(a.name)).ToArray();
 
 		

@@ -1664,7 +1664,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 88e2a49e8406fac418335f87f3219f81, type: 3}
   - {fileID: 21300000, guid: 081cd128604163443bbeae45e343e6ea, type: 3}
   - {fileID: 21300000, guid: 59336679467aa91489372aedace691ed, type: 3}
-  - {fileID: 21300000, guid: ba2c103db7f50b74f99a958b0e34a610, type: 3}
+  - {fileID: 21300000, guid: 50e8526d4da085940990db04b57889a1, type: 3}
+  - {fileID: 21300000, guid: dc899a58f8ffad04ca59c8ce8615d34c, type: 3}
   spriteNames: []
   idxOrder: {fileID: 0}
   debugText: {fileID: 0}
