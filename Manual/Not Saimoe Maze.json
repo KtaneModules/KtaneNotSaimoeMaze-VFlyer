@@ -1,0 +1,19 @@
+{
+  "Compatibility": "Compatible",
+  "Contributors": {
+    "Developer": [ "VFlyer" ],
+    "Idea": [ "Tachatat18" ],
+    "Modeling": [ "BigCrunch22" ]
+  },
+  "DefuserDifficulty": "Hard",
+  "Description": "",
+  "ExpertDifficulty": "Hard",
+  "ModuleID": "NotSaimoeMaze",
+  "Name": "Not Saimoe Maze",
+  "Origin": "Mods",
+  "Published": "2024-04-11",
+  "SortKey": "NOTSAIMOEMAZE",
+  "SourceUrl": "https://github.com/VFlyer/KtaneNotSaimoeMaze",
+  "SteamID": "3219808090",
+  "Type": "Regular"
+}
